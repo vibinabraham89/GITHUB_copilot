@@ -344,6 +344,7 @@ Go to Scenario A          Continue workflow        before touching
 This changes your workflow. You cannot skip straight to implementing the feature. You need a safety net first or you are flying blind.
 
 Mode: Ask
+
 Read the entire src/ folder.
 
 For every function and module you find,
@@ -354,8 +355,8 @@ describe the current behaviour:
 - What side effects it has (DB writes, API calls, emails)
 
 Do not suggest changes.
-I need to document current behaviour before
-I write any tests or change any code.
+I need to document current behaviour before I write any tests or change any code.
+
 Then — Mode: Agent
 Based on the behaviour you just described,
 generate characterisation tests for the entire codebase.
@@ -378,7 +379,9 @@ Rules:
 Write tests into:
 tests/characterisation/<modulename>.test.ts
 
-After writing, run npm test.
+After writing, 
+
+run npm test.
 Every characterisation test must pass before we continue.
 Once characterisation tests pass, run:
 bashnpm test   # now passes
