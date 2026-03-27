@@ -312,3 +312,147 @@ Step 5           Agent      Existing tests must pass · zero regressions
 Step 6           Agent      New tests for new behaviour
 Step 7           Plan+Agent Review diff · fix Critical and High
 Step 8           Ask+You    Final check · you commit manually
+
+
+
+What actually happens with no test cases
+
+
+Jest:    "No tests found" → exits with error code 1
+                          → npm test shows FAILED
+
+Vitest:  "No test files found" → exits with error code 1
+
+Mocha:   "Error: No files matching the pattern" → exits with error
+
+All of them: npm test will show as FAILED
+             even though nothing is actually broken
+So yes — your clean baseline check from Step 0 will fail immediately, and you cannot distinguish "no tests exist" from "tests are broken."
+
+What to do — decision tree
+Run npm test
+     ↓
+What do you see?
+     ↓
+"No tests found"          "X tests passing"        "X tests failing"
+      ↓                          ↓                        ↓
+No test suite exists      Clean baseline           Fix these first
+Go to Scenario A          Continue workflow        before touching
+                                                   anything else
+
+**Scenario A — No test suite exists at all**
+This changes your workflow. You cannot skip straight to implementing the feature. You need a safety net first or you are flying blind.
+
+Mode: Ask
+Read the entire src/ folder.
+
+For every function and module you find,
+describe the current behaviour:
+- What does it accept as input
+- What does it return
+- What errors it can throw
+- What side effects it has (DB writes, API calls, emails)
+
+Do not suggest changes.
+I need to document current behaviour before
+I write any tests or change any code.
+Then — Mode: Agent
+Based on the behaviour you just described,
+generate characterisation tests for the entire codebase.
+
+Characterisation tests capture CURRENT behaviour —
+not correct behaviour, not ideal behaviour.
+Whatever the code does right now is what the test asserts.
+Even if the behaviour seems wrong, test it as-is.
+We are creating a snapshot, not fixing bugs.
+
+Rules:
+- If a function currently returns null for missing input,
+  the test asserts null — do not change it to throw an error
+- If a function currently has no error handling,
+  test the happy path only — do not add error cases
+- Use the simplest possible assertions
+- Name every test: "current behaviour: <what it does>"
+  so it is clear these are snapshots not specifications
+
+Write tests into:
+tests/characterisation/<modulename>.test.ts
+
+After writing, run npm test.
+Every characterisation test must pass before we continue.
+Once characterisation tests pass, run:
+bashnpm test   # now passes
+git add .
+git commit -m "test: add characterisation tests as safety net"
+```
+
+Now you have a baseline. Continue with the normal feature change workflow from Step 1.
+
+---
+
+**## Scenario B — Test framework not even installed**
+
+Sometimes there is no Jest, no Vitest, nothing. `npm test` returns:
+```
+Error: missing script: test
+```
+
+or
+```
+sh: jest: command not found
+```
+
+**Mode: Ask first**
+```
+Read package.json and the src/ folder.
+
+What test framework would best fit this project
+based on:
+- The existing tech stack
+- The module system used (CommonJS or ESM)
+- Whether there is any existing test configuration
+
+Recommend one framework only.
+Do not install anything yet.
+```
+
+Then — **Mode: Agent**
+```
+Set up the test framework you recommended.
+
+Install the required packages.
+Create the configuration file.
+Update the test script in package.json.
+Create one example test file that verifies
+the setup is working correctly.
+
+Run npm test to confirm the setup works.
+Then go back to Scenario A and generate characterisation tests.
+
+Updated Step 0 for no-test projects
+Replace the original clean baseline check with this:
+bash# Run npm test and check what happens
+npm test
+
+# If "no tests found" or "missing script: test"
+# → Go to Scenario A or B above before continuing
+# → Do not proceed with feature change until
+#   characterisation tests exist and pass
+
+# If tests pass
+# → Continue with normal workflow
+```
+
+---
+
+## The one rule to remember
+```
+No tests = no safety net = agent mode is dangerous
+
+You would not let a contractor renovate your house
+while the smoke alarms are disconnected.
+
+Same principle here.
+Set up the characterisation tests first.
+Then change the feature.
+Then you know exactly what you broke.
