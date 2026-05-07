@@ -324,3 +324,6 @@ Cite specific files and explain why each is a risk.
 Which critical paths in this codebase are not covered by tests?
 Cross-reference with the riskiest modules.
 ```
+
+
+Refine ARCHITECTURE_MEMORY.md focusing on execution flow and risks
