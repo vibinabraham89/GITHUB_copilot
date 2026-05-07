@@ -150,14 +150,16 @@ List every assumption:
 
 ---
 
-Finally, create the file: docs/ARCHITECTURE_MEMORY.md
+Finally, generate the complete content for docs/ARCHITECTURE_MEMORY.md.
 
-⚠️ IMPORTANT — Output Size Control:
-If the output is large, generate the file in multiple parts.
-
-- Generate sections incrementally (e.g. sections 1–4, then 5–8, etc.)
+⚠️ IMPORTANT:
+- Do NOT attempt to write to a file
+- Output the content directly in chat
+- If the output is large, generate it in multiple parts
+- Clearly label each part (e.g. PART 1, PART 2, etc.)
 - Wait for confirmation before continuing to the next part
-- Do NOT attempt to generate the entire file in a single response if it is large
+
+I will manually copy and save it into docs/ARCHITECTURE_MEMORY.md
 
 Use the structure defined in the OUTPUT STRUCTURE section below.
 ```
